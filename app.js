@@ -11,72 +11,40 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-// Store the submitted message temporarily for displaying it
-let receivedMessage = '';
+// Store received messages in an array (could be replaced with a DB)
+let receivedMessages = [];
 
 // Routes
 app.get('/', (req, res) => {
     res.render('index', {
         qrCodeUrl: null,
-        message: receivedMessage, // Display received message if any
-        qrType: null,
+        messages: receivedMessages,  // Display all received messages
         error: null,
     });
 });
 
-// Generate QR code for sending text
-app.post('/generate', async (req, res) => {
-    const text = req.body.text;
-
-    if (!text) {
-        return res.render('index', {
-            qrCodeUrl: null,
-            message: null,
-            qrType: null,
-            error: 'Please provide text to generate a QR code',
-        });
-    }
-
-    try {
-        const qrCodeUrl = await QRCode.toDataURL(text);
-        res.render('index', { qrCodeUrl, message: text, qrType: 'send-text', error: null });
-    } catch (err) {
-        console.error(err);
-        res.render('index', { qrCodeUrl: null, message: null, qrType: null, error: 'Failed to generate QR code' });
-    }
-});
-
-// Generate QR code to receive text submission
+// Generate QR code that any device can scan to send data
 app.post('/generate-receive-qr', async (req, res) => {
     try {
-        const receiveUrl = `${req.protocol}://${req.get('host')}/receive`;
-        const qrCodeUrl = await QRCode.toDataURL(receiveUrl);
+        const receiveUrl = `${req.protocol}://${req.get('host')}/receive`; // URL to send data
+        const qrCodeUrl = await QRCode.toDataURL(receiveUrl); // Generate QR code
 
-        res.render('index', { qrCodeUrl, message: null, qrType: 'receive-text', error: null });
+        res.render('index', { qrCodeUrl, messages: receivedMessages, error: null });
     } catch (err) {
         console.error(err);
-        res.render('index', { qrCodeUrl: null, message: null, qrType: null, error: 'Failed to generate QR code' });
+        res.render('index', { qrCodeUrl: null, messages: receivedMessages, error: 'Failed to generate QR code' });
     }
 });
 
-// Form to receive text submission
+// Receive data from QR code scan and store it
 app.get('/receive', (req, res) => {
-    res.render('receive', { message: null });
-});
+    const receivedData = req.query.data; // Get the data from the URL query
 
-// Handle text submission from scanned device
-app.post('/receive', (req, res) => {
-    const message = req.body.message;
-
-    if (!message) {
-        return res.render('receive', { message: 'Please enter a valid message!' });
+    if (receivedData) {
+        receivedMessages.push(receivedData); // Store it in the array
     }
 
-    // Save the received message temporarily
-    receivedMessage = message;
-
-    // Redirect to the main page to display the message
-    res.redirect('/');
+    res.redirect('/'); // Redirect back to the home page to show the data
 });
 
 // Start the server

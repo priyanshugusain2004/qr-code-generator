@@ -21,46 +21,49 @@
             color: red;
             font-weight: bold;
         }
+        .message-list {
+            margin-top: 20px;
+        }
+        .message {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Text QR Code System</h1>
 
-        <!-- Form to generate QR code for sending text -->
-        <form action="/generate" method="POST">
-            <input type="text" name="text" placeholder="Enter text to send" required>
-            <button type="submit">Generate QR Code for Sending Text</button>
-        </form>
-
         <!-- Button to generate QR code for receiving text -->
         <form action="/generate-receive-qr" method="POST">
-            <button type="submit">Generate QR Code for Receiving Text</button>
+            <button type="submit">Generate QR Code for Receiving Data</button>
         </form>
 
         <!-- Display generated QR code -->
         <% if (qrCodeUrl) { %>
-            <h3>Your QR Code:</h3>
+            <h3>Scan this QR code to send data:</h3>
             <img src="<%= qrCodeUrl %>" alt="QR Code">
-
-            <% if (qrType === 'send-text') { %>
-                <p>Scan this QR code to access the following text:</p>
-                <p><strong><%= message %></strong></p>
-            <% } %>
-
-            <% if (qrType === 'receive-text') { %>
-                <p>Scan this QR code to submit text from your mobile device.</p>
-            <% } %>
         <% } %>
+
+        <!-- Display received messages -->
+        <div class="message-list">
+            <h3>Received Messages:</h3>
+            <% if (messages.length > 0) { %>
+                <% messages.forEach(function(message) { %>
+                    <div class="message">
+                        <p><strong>Message:</strong> <%= message %></p>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No messages received yet.</p>
+            <% } %>
+        </div>
 
         <% if (error) { %>
             <p class="error"><%= error %></p>
-        <% } %>
-
-        <!-- Display received message if any -->
-        <% if (message) { %>
-            <h3>Received Message:</h3>
-            <p><strong><%= message %></strong></p>
         <% } %>
     </div>
 </body>
