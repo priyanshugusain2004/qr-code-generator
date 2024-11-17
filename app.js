@@ -11,9 +11,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
+// Store the submitted message temporarily for displaying it
+let receivedMessage = '';
+
 // Routes
 app.get('/', (req, res) => {
-    res.render('index', { qrCodeUrl: null, message: null, qrType: null, error: null });
+    res.render('index', {
+        qrCodeUrl: null,
+        message: receivedMessage, // Display received message if any
+        qrType: null,
+        error: null,
+    });
 });
 
 // Generate QR code for sending text
@@ -64,7 +72,11 @@ app.post('/receive', (req, res) => {
         return res.render('receive', { message: 'Please enter a valid message!' });
     }
 
-    res.render('receive', { message: `Received message: ${message}` });
+    // Save the received message temporarily
+    receivedMessage = message;
+
+    // Redirect to the main page to display the message
+    res.redirect('/');
 });
 
 // Start the server

@@ -56,6 +56,12 @@
         <% if (error) { %>
             <p class="error"><%= error %></p>
         <% } %>
+
+        <!-- Display received message if any -->
+        <% if (message) { %>
+            <h3>Received Message:</h3>
+            <p><strong><%= message %></strong></p>
+        <% } %>
     </div>
 </body>
 </html>
