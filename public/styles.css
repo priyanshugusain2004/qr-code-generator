@@ -1,55 +1,18 @@
-/* Apply background color to the entire page */
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    background-color: #808080; /* Replace with your desired color */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
     font-family: Arial, sans-serif;
 }
 
-/* Container styles */
-.container {
-    text-align: center;
-    background: rgb(175, 206, 198);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Input styles */
-input {
-    width: 80%;
+input, button, textarea {
+    display: block;
+    margin: 10px auto;
     padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    width: 80%;
 }
 
-/* Button styles */
-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-/* QR code image */
-img {
-    margin-top: 20px;
-}
-
-/* Error message */
 .error {
     color: red;
-    margin-top: 10px;
+    font-weight: bold;
 }
