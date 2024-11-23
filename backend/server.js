@@ -1,54 +1,21 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const QRCode = require('qrcode');
-const fs = require('fs');
-
+const path = require('path');
 const app = express();
-const port = 3000;
 
-// In-memory data store (this can be replaced with a database)
-let dataStore = {};
+// Serve static files from the 'frontend' directory
+app.use(express.static(path.join(__dirname, 'frontend')));
 
-// Middleware
-app.use(bodyParser.json());
-app.use(express.static('frontend'));
-
-// Endpoint to receive text and generate QR code
-app.post('/generate', (req, res) => {
-    const { text } = req.body;
-
-    if (!text) {
-        return res.status(400).json({ message: 'Text is required to generate QR code.' });
-    }
-
-    // Generate QR code
-    QRCode.toDataURL(text, (err, url) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error generating QR code.' });
-        }
-
-        // Store QR code URL in dataStore
-        const id = Date.now().toString();  // Unique ID for the generated data
-        dataStore[id] = { text, qrCodeUrl: url };
-
-        // Respond with the QR code URL and ID
-        res.status(200).json({ id, qrCodeUrl: url });
-    });
+// Serve the index.html file for the root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
-// Endpoint to retrieve data by ID (for QR code scanner)
-app.get('/data/:id', (req, res) => {
-    const id = req.params.id;
-    const data = dataStore[id];
-
-    if (!data) {
-        return res.status(404).json({ message: 'Data not found.' });
-    }
-
-    res.status(200).json({ text: data.text });
+// Example route for the scanner page
+app.get('/scanner', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'scanner.html'));
 });
 
-// Start server
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+// Start the server
+app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
 });
